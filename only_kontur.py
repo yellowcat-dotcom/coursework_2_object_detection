@@ -1,6 +1,6 @@
 import numpy
 import cv2
-import imutils  #позволяет  подсчитывать кол-во контуров
+import imutils  #позволяет подсчитывать кол-во контуров
 
 image =cv2.imread("airplane_017.jpg")
 gray=cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
