@@ -26,10 +26,8 @@ def mouse_callback(event, x, y, flags, param):
         cv2.destroyAllWindows()
 
 
-img = cv2.imread('airplane_017.jpg')
-# img = cv2.imread('airplane_022.jpg')
-# img = cv2.imread('airplane_137.jpg')
-#img = cv2.imread('airplane_044.jpg')
+img = cv2.imread('img/img_1.jpg')
+
 
 
 cv2.namedWindow('image')
@@ -45,7 +43,7 @@ cv2.imwrite('roi.png', roi)
 print('ROI saved to roi.jpg')
 
 
-
+start_time = time.time()
 img_rgb = img
 img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
 
@@ -61,6 +59,10 @@ loc = np.where(res >= threshold)
 for pt in zip(*loc[::-1]):
     cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 255, 255), 2)
 
+end_time = time.time()
+elapsed_time = end_time - start_time
+
+print(f"Время выполнения программы: {elapsed_time:.2f} секунд")
 cv2.imshow('Detected', img_rgb)
 cv2.waitKey(0)
 

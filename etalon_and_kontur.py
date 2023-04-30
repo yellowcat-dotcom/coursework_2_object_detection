@@ -33,7 +33,7 @@ def mouse_callback(event, x, y, flags, param):
 
 
 # Загружаем изображение
-img = cv2.imread("airplane_017.jpg")
+img = cv2.imread("img/img_1.jpg")
 #img = cv2.imread("img.png")
 
 # Создаем окно и назначаем функцию обратного вызова для событий мыши на окне
