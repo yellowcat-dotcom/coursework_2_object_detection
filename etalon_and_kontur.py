@@ -43,7 +43,7 @@ cv2.setMouseCallback('image', mouse_callback)
 # Показываем изображение и ждем нажатия клавиши
 cv2.imshow('image', img)
 cv2.waitKey(0)
-
+#####
 start_time = time.time()
 # Сохраняем выделенную область в файл roi.png
 cv2.imwrite('roi.png', roi)
@@ -67,8 +67,7 @@ loc = np.where(res >= threshold)
 
 # Для каждого найденного совпадения находим контуры объектов и рисуем их на исходном изображении
 for pt in zip(*loc[::-1]):
-    # находим контуры объектов
-    # Создаем копию черно-белого изображения и выделяем область, соответствующую найденному совпадению
+
     img_gray_copy = img_gray.copy()
     roi_gray = img_gray_copy[pt[1]:pt[1] + h, pt[0]:pt[0] + w]
     # бинаризация изображения и нахождение контуров

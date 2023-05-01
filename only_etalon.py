@@ -33,11 +33,11 @@ img = cv2.imread('img/img_1.jpg')
 cv2.namedWindow('image')
 cv2.setMouseCallback('image', mouse_callback)
 
-start_time = time.time()
+
 cv2.imshow('image', img)
 cv2.waitKey(0)
 
-
+#######
 
 cv2.imwrite('roi.png', roi)
 print('ROI saved to roi.jpg')
