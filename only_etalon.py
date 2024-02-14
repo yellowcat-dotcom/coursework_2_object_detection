@@ -26,7 +26,7 @@ def mouse_callback(event, x, y, flags, param):
         cv2.destroyAllWindows()
 
 
-img = cv2.imread('img/img_1.jpg')
+img = cv2.imread('img/lena.png')
 
 
 
@@ -51,13 +51,17 @@ template = cv2.imread('roi.png', 0)
 
 #тут надо попробовать вращать
 
-w, h = template.shape[::-1]
-res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
-threshold = 0.7
-loc = np.where(res >= threshold)
+for i in range(4):
+    template = cv2.rotate(template, cv2.ROTATE_90_CLOCKWISE)
 
-for pt in zip(*loc[::-1]):
-    cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 255, 255), 2)
+
+    w, h = template.shape[::-1]
+    res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
+    threshold = 0.7
+    loc = np.where(res >= threshold)
+
+    for pt in zip(*loc[::-1]):
+        cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 255, 255), 2)
 
 end_time = time.time()
 elapsed_time = end_time - start_time

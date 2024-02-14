@@ -33,7 +33,7 @@ def mouse_callback(event, x, y, flags, param):
 
 
 # Загружаем изображение
-img = cv2.imread("img/img_1.jpg")
+img = cv2.imread("img/lena.png")
 #img = cv2.imread("img.png")
 
 # Создаем окно и назначаем функцию обратного вызова для событий мыши на окне
@@ -57,27 +57,53 @@ img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
 template = cv2.imread('roi.png', 0)
 
 #                   тут надо попробовать вращать
+for i in range(4):
+    template = cv2.rotate(template, cv2.ROTATE_90_CLOCKWISE)
 
-w, h = template.shape[::-1]
-# Ищем шаблон на изображении
-res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
-# Устанавливаем пороговое значение и получаем координаты найденных совпадени
-threshold = 0.7
-loc = np.where(res >= threshold)
+    w, h = template.shape[::-1]
+    # Ищем шаблон на изображении
+    res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
+    # Устанавливаем пороговое значение и получаем координаты найденных совпадени
+    threshold = 0.7
+    loc = np.where(res >= threshold)
 
 # Для каждого найденного совпадения находим контуры объектов и рисуем их на исходном изображении
-for pt in zip(*loc[::-1]):
+    for pt in zip(*loc[::-1]):
+        img_gray_copy = img_gray.copy()
+        roi_gray = img_gray_copy[pt[1]:pt[1] + h, pt[0]:pt[0] + w]
 
-    img_gray_copy = img_gray.copy()
-    roi_gray = img_gray_copy[pt[1]:pt[1] + h, pt[0]:pt[0] + w]
-    # бинаризация изображения и нахождение контуров
-    _, thresh = cv2.threshold(roi_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # Адаптивная бинаризация
+        #thresh = cv2.adaptiveThreshold(roi_gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, blockSize=11, C=2)
+        gray = cv2.GaussianBlur(roi_gray, (1, 1), 0)
+        # Применение оператора Canny
+        edges = cv2.Canny(gray, 300, 650)
 
-    # рисуем контуры на исходном изображении
-    for cnt in contours:
-        cnt = cnt + np.array([pt[0], pt[1]])  # сдвигаем контур на координаты области интереса
-        cv2.drawContours(img_rgb, [cnt], 0, (0, 0, 255), 2)
+        # Использование морфологической операции для улучшения контуров
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
+        edges = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel)
+
+        # Поиск контуров
+        contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
+
+        # Рисование контуров на исходном изображении
+        for cnt in contours:
+            cnt = cnt + np.array([pt[0], pt[1]])  # Сдвигаем контур на координаты области интереса
+            cv2.drawContours(img_rgb, [cnt], 0, (0, 0, 255), 2)
+
+
+
+# for pt in zip(*loc[::-1]):
+#
+#     img_gray_copy = img_gray.copy()
+#     roi_gray = img_gray_copy[pt[1]:pt[1] + h, pt[0]:pt[0] + w]
+#     # бинаризация изображения и нахождение контуров
+#     _, thresh = cv2.threshold(roi_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+#     contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+#
+#     # рисуем контуры на исходном изображении
+#     for cnt in contours:
+#         cnt = cnt + np.array([pt[0], pt[1]])  # сдвигаем контур на координаты области интереса
+#         cv2.drawContours(img_rgb, [cnt], 0, (0, 0, 255), 2)
 
 cv2.imshow('Detected', img_rgb)
 cv2.imwrite('Detected.png', img_rgb)

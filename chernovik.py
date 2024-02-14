@@ -48,7 +48,6 @@ def detect_template_in_image(image_path):
     template = cv2.imread('roi.png', 0)
     for i in range(4):
         template = cv2.rotate(template, cv2.ROTATE_90_CLOCKWISE)
-
         # тут надо попробовать вращать
         w, h = template.shape[::-1]
         res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
@@ -60,7 +59,7 @@ def detect_template_in_image(image_path):
         elapsed_time = end_time - start_time
     return img_rgb, elapsed_time
 
-def detect_and_draw_contours(image_path, kernel_size=(3,3), canny_thresholds=(200, 900), contour_color=(0, 255), contour_thickness=4):
+def detect_and_draw_contours(image_path, kernel_size=(1,1), canny_thresholds=(300, 900), contour_color=(0, 255), contour_thickness=4):
     # на основе контура
     start_time = time.time()
     image = cv2.imread(image_path)
@@ -147,19 +146,16 @@ def open_img():
     abb = ImageTk.PhotoImage(imgg)
     pane = Label(root, image=abb)
     pane.image = abb
-    pane.place(x=1090, y=32)
+    pane.place(x=980, y=50)
     global label_etalon
     label_etalon = Label(text="Эталон")
     label_etalon.place(x=980, y=32)
     #конец вывода эталона
-    global label_time
-    label_time = Label(text='Время выполнения:')
-    label_time.place(x=990, y=280)
-
+    txt='Время выполнения:\n'
     # только эталон
     image_etalon, time_etalon = detect_template_in_image(x)
     cv2.imwrite('image_etalon.png', image_etalon)
-    time_etalon= "Поиск объекта на основе \n поиска эталона"+'\n'+str(time_etalon)
+    txt=txt+"Поиск объекта на основе \n поиска эталона"+'\n'+str(time_etalon)+'\n'
     #print("Поиск объекта на основе контуров", time_etalon)
     img_only_etalon = Image.fromarray(image_etalon)
     img_only_etalon_resize = img_only_etalon.resize((450, 300), Image.Resampling.LANCZOS)
@@ -171,15 +167,11 @@ def open_img():
     global label_etalon_metod
     label_etalon_metod = Label(text="Поиск объекта на основе контуров")
     label_etalon_metod.place(x=655, y=332)
-    # вывод времени
-    global label_time_etalon
-    label_time_etalon=Label(text=time_etalon)
-    label_time_etalon.place(x=970, y=300)
 
 # только контур
     image_kontur, time_kountur=detect_and_draw_contours(x)
     #print("Поиск объекта на основе контуров",time_kountur)
-    time_kountur="Поиск объекта на основе контуров"+'\n'+str(time_kountur)
+    txt=txt+"Поиск объекта на основе контуров"+'\n'+str(time_kountur)+'\n'
     cv2.imwrite('image_kontur.png', image_kontur)
         # вывод и подпись метода на основе контура
     img_only_kontut = Image.fromarray(image_kontur)
@@ -192,15 +184,11 @@ def open_img():
     global label_kontut
     label_kontut = Label(text="Поиск объекта на основе контуров")
     label_kontut.place(x=155, y=682)
-    # вывод времени
-    global label_time_kountur
-    label_time_kountur = Label(text=time_kountur)
-    label_time_kountur.place(x=970, y=370)
 
     #эталон и контур
     kont_and_templ, time_kont_and_templ = detect_template_and_contours(x)
     cv2.imwrite('kont_and_templ.png', kont_and_templ)
-    time_kont_and_templ="Поиск объекта на основе эталона \n и контуров"+'\n'+str(time_kont_and_templ)
+    txt=txt+"Поиск объекта на основе эталона \n и контуров"+'\n'+str(time_kont_and_templ)
     #print("Поиск объекта на основе эталона и контуров",time_kont_and_templ)
     img_kont_and_templ = Image.fromarray(kont_and_templ)
     img_kont_and_templ_resize = img_kont_and_templ.resize((450, 300), Image.Resampling.LANCZOS)
@@ -213,9 +201,9 @@ def open_img():
     label_kont_and_templ = Label(text="Поиск объекта на основе эталона и контуров")
     label_kont_and_templ.place(x=655, y=682)
     # вывод времени
-    global label_time_kont_and_templ
-    label_time_kont_and_templ = Label(text=time_kont_and_templ)
-    label_time_kont_and_templ.place(x=970, y=440)
+    global label_time
+    label_time = Label(text=txt)
+    label_time.place(x=970, y=340)
 
 def openfilename():
     filename = filedialog.askopenfilename(title='Выбор изображения')
@@ -231,13 +219,11 @@ def remove_text():
         label_etalon.destroy()
         panel_img_only_etalon_tk.destroy()
         label_etalon_metod.destroy()
-        label_time_etalon.destroy()
         panel_img_kont_and_templ_tk.destroy()
         label_kont_and_templ.destroy()
-        label_time_kont_and_templ.destroy()
         panel_img_only_kontut_tk.destroy()
         label_kontut.destroy()
-        label_time_kountur.destroy()
+
     else:
         messagebox.showerror(title="Ошибка", message="Необходимо выбрать изображение")
 

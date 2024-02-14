@@ -3,14 +3,14 @@ import cv2
 import imutils  #позволяет подсчитывать кол-во контуров
 import time
 
-image =cv2.imread("img/img_1.jpg")
+image =cv2.imread("img/img_2.jpg")
 start_time = time.time()
 gray=cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 #упрощаем изображение наложением блюра по гауссу
-gray=cv2.GaussianBlur(gray, (3,3),0)
+gray=cv2.GaussianBlur(gray, (1,1),0)
 #выделение активных зон МЕНЯТЬ ВТОРОЙ ПАРАМЕТР 100
-edges=cv2.Canny(gray, 150, 750)
+edges=cv2.Canny(gray, 300, 650)
 
 #Создаем закрытие для шума с помощью ядра МЕНЯТЬ ПАРАМЕТР (10,10)
 kernel=cv2.getStructuringElement(cv2.MORPH_RECT, (1,1))
